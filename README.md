@@ -23,6 +23,6 @@ Your app is ready to be deployed!
 
 🎞You can learn more details in this link below (Only KOR sub yet).\
 https://youtu.be/UbuAjz3OJ0A  \
-![#3](https://github.com/UN1TOne/BabylonReactReusableTemplate/assets/154226870/8e5a219a-b8fb-4716-8575-56f2bf7a0d02) \
+![#3](https://github.com/UN1TOne/BabylonReactReusableTemplate/assets/154226870/8e5a219a-b8fb-4716-8575-56f2bf7a0d02)
 
 ❤Hit the Like & Subscribe button plz❤  
