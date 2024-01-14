@@ -21,5 +21,5 @@ Your app is ready to be deployed!
 ## Learn More
 
 🎞You can learn more details in this link below (Only KOR sub yet)
-
+https://youtu.be/UbuAjz3OJ0A
 ❤Hit the Like & Subscribe button plz❤  
