@@ -26,6 +26,8 @@ class MainScene extends Scene {
     dirLight: Nullable<DirectionalLight> = null;
     pointLight: Nullable<PointLight> = null;
     
+    DEVMODE = true;
+
     constructor(engine: Engine) {
         super(engine, { useClonedMeshMap: true, useMaterialMeshMap: true, useGeometryUniqueIdsMap: true });
         this.engine = engine;
@@ -41,6 +43,15 @@ class MainScene extends Scene {
         this.addDefaultCameras();
         this.addDefaultLights();
         this.loadModels();
+
+        // Inspector for dev
+        if(this.DEVMODE) this.debugLayer.setAsActiveScene();
+        this.debugLayer.show({
+          embedMode: false,
+          enablePopup: false,
+          enableClose: false,
+          overlay: true,
+        });
 
         this.engine.runRenderLoop(() => {
             if (!this.isScenePaused) {
