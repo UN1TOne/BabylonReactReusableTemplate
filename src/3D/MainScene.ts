@@ -12,23 +12,25 @@ import {
     Nullable,
     PointLight,
     Tools,
+    WebGPUEngine,
+    FreeCamera,
 } from "@babylonjs/core";
 import { GLTFFileLoader } from "@babylonjs/loaders";
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 
 class MainScene extends Scene {
-    engine: Engine;
+    engine: Engine | WebGPUEngine;
     isScenePaused: boolean = false;
     sceneRoot: Nullable<TransformNode> = null;
-    camera: Nullable<ArcRotateCamera> = null;
+    camera: Nullable<ArcRotateCamera | FreeCamera> = null;
     shadowGenerator: Nullable<ShadowGenerator> = null;
     dirLight: Nullable<DirectionalLight> = null;
     pointLight: Nullable<PointLight> = null;
-    
+
     DEVMODE = true;
 
-    constructor(engine: Engine) {
+    constructor(engine: Engine | WebGPUEngine) {
         super(engine, { useClonedMeshMap: true, useMaterialMeshMap: true, useGeometryUniqueIdsMap: true });
         this.engine = engine;
         this.init();
@@ -36,7 +38,7 @@ class MainScene extends Scene {
 
     protected init() {
         GLTFFileLoader.IncrementalLoading = false;
-        
+
         this.animationsEnabled = true;
         this.collisionsEnabled = false;
 
@@ -45,12 +47,12 @@ class MainScene extends Scene {
         this.loadModels();
 
         // Inspector for dev
-        if(this.DEVMODE) this.debugLayer.setAsActiveScene();
+        if (this.DEVMODE) this.debugLayer.setAsActiveScene();
         this.debugLayer.show({
-          embedMode: false,
-          enablePopup: false,
-          enableClose: false,
-          overlay: true,
+            embedMode: false,
+            enablePopup: false,
+            enableClose: false,
+            overlay: true,
         });
 
         this.engine.runRenderLoop(() => {
@@ -61,7 +63,7 @@ class MainScene extends Scene {
     }
 
     addDefaultCameras() {
-        const camera = new ArcRotateCamera("ArcRotateCamera", Math.PI/2,  Tools.ToRadians(90), 30, new Vector3(0, 3, 0), this, true);
+        const camera = new ArcRotateCamera("ArcRotateCamera", Math.PI / 2, Tools.ToRadians(90), 30, new Vector3(0, 3, 0), this, true);
         camera.attachControl();
         camera.wheelDeltaPercentage = 0.015;
         camera.zoomToMouseLocation = true;
@@ -77,13 +79,19 @@ class MainScene extends Scene {
         camera.lowerRadiusLimit = 1;
         camera.upperRadiusLimit = 100;
 
+        // const camera = new FreeCamera("camera", Vector3.Zero(), this);
+        // camera.minZ = .5;
+        // camera.maxZ = 1000000;
+        // camera.speed = 10;
+        // camera.attachControl();
+
         this.camera = camera;
     }
 
     addDefaultLights() {
         const hemiLight = new HemisphericLight("Hemi Light", new Vector3(0, 1, 0), this);
         hemiLight.intensity = .5;
- 
+
         this.dirLight = new DirectionalLight("Directional Light", new Vector3(-1, -2, -1), this);
         this.dirLight.position = new Vector3(0, 10, 0);
         this.dirLight.intensity = 3;
@@ -94,20 +102,22 @@ class MainScene extends Scene {
 
     loadModels() {
         // [1]. Import mesh from local path
-        SceneLoader.ImportMesh("", "/assets/", "UNIT logo.glb", this, function (meshes, particleSystems, skeletons, animations) {   
-            const model = meshes[0];  
+        SceneLoader.ImportMeshAsync("", "/assets/", "UNIT logo.glb").then((result) => {
+            const model = result.meshes[0];
+            model.scaling.scaleInPlace(100);
+            model.normalizeToUnitCube();
         });
-         
+
         // [2]. Import mesh from git storage
         // SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/UN1TOne/3DAsset/master/", "UNIT logo.glb", this, (meshes, particleSystems, skeletons, animations) => {          
         //     const model = meshes[0];
         // });
-        
+
         // [3]. Load assets and append them to scene from git storage
         // SceneLoader.Append("https://raw.githubusercontent.com/UN1TOne/3DAsset/master/", "UNIT logo.glb", this, (scene) => {          
         //     const model = scene.meshes.filter(m=> m.name === "__root__")[0];
         // });
-    
+
         // [4]. Load assets and not append them to scene from git storage
         // SceneLoader.LoadAssetContainer("https://raw.githubusercontent.com/UN1TOne/3DAsset/master/", "UNIT logo.glb", this, (container) => {
         //     const meshes = container.meshes[0];

@@ -4,7 +4,7 @@ import css from './BJSCanvas.module.scss';
 import { GLTFFileLoader } from "@babylonjs/loaders";
 
 type BJSCanvasProps = {
-    onLoad: (engine: Engine, canvas?: HTMLCanvasElement) => void
+    onLoad: (engine: Engine | WebGPUEngine, canvas?: HTMLCanvasElement) => void
 }
 
 const BJSCanvas = (props: BJSCanvasProps) => {
@@ -12,46 +12,48 @@ const BJSCanvas = (props: BJSCanvasProps) => {
 
     /** 
      * WebGL
-     */ 
-    useEffect(() => {
-        if (babylonCanvas?.current) {
-            const engine = new Engine(babylonCanvas.current, true, {premultipliedAlpha: false, preserveDrawingBuffer: true, stencil: true}, true);
-            GLTFFileLoader.IncrementalLoading = false;
+     */
+    /*
 
-            const resize = () => {
-                if (babylonCanvas?.current && babylonCanvas.current.parentElement) {
-                    babylonCanvas.current.width = babylonCanvas.current.parentElement.offsetWidth;
-                    babylonCanvas.current.height = babylonCanvas.current.parentElement.offsetHeight;
-                }
-                engine.resize();
-            };
-            resize();
+useEffect(() => {
+    if (babylonCanvas?.current) {
+        const engine = new Engine(babylonCanvas.current, true, {premultipliedAlpha: false, preserveDrawingBuffer: true, stencil: true}, true);
+        GLTFFileLoader.IncrementalLoading = false;
+
+        const resize = () => {
+            if (babylonCanvas?.current && babylonCanvas.current.parentElement) {
+                babylonCanvas.current.width = babylonCanvas.current.parentElement.offsetWidth;
+                babylonCanvas.current.height = babylonCanvas.current.parentElement.offsetHeight;
+            }
+            engine.resize();
+        };
+        resize();
+
+        if (window) {
+            window.removeEventListener("resize", resize);
+            window.addEventListener("resize", resize);
+        }
+
+        if (props.onLoad) {
+            props.onLoad(engine, babylonCanvas.current);
+        }
+
+        return () => {
+            engine.dispose();
 
             if (window) {
                 window.removeEventListener("resize", resize);
-                window.addEventListener("resize", resize);
             }
-
-            if (props.onLoad) {
-                props.onLoad(engine, babylonCanvas.current);
-            }
-
-            return () => {
-                engine.dispose();
-
-                if (window) {
-                    window.removeEventListener("resize", resize);
-                }
-            };
-        }
-    }, [babylonCanvas]);
+        };
+    }
+}, [babylonCanvas]);
+*/
 
 
     /**
      * WebGPU
      */
 
-    /*
     useEffect(() => {
         async function setupWebGPU() {
             let engine: WebGPUEngine | Engine | null = null;
@@ -104,7 +106,6 @@ const BJSCanvas = (props: BJSCanvasProps) => {
         setupWebGPU();
     }, [babylonCanvas]);
 
-    */
 
     return (
         <div className={css.canvasContainer}>
